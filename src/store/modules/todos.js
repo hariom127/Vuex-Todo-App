@@ -10,8 +10,9 @@ const getters = {
 };
 
 const actions = {
-    async fetchTodos({ commit }) {
-        const response = await axios.get('https://jsonplaceholder.typicode.com/todos');
+    async fetchTodos({ commit }, limit) {
+        limit = limit || 5;
+        const response = await axios.get(`https://jsonplaceholder.typicode.com/todos?_limit=${limit}`);
         console.log(response.data);
         commit('setTodos', response.data)
     },
@@ -23,7 +24,14 @@ const actions = {
         );
     
         commit('newTodo', response.data);
-      },
+    },
+
+    async deleteTodo({ commit }, id) {
+       await axios.delete(`https://jsonplaceholder.typicode.com/todos/${id}`);
+        commit('removeTodo', id);
+    },
+
+
 };
 
 const mutations = {
@@ -32,7 +40,8 @@ const mutations = {
     },
     newTodo: (state, todo) => {
         return state.todos.unshift(todo)
-    }
+    },
+    removeTodo: (state, id) => state.todos = state.todos.filter(todo => todo.id !== id)
 };
 
 
